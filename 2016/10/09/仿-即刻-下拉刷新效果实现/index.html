@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>仿&lt;即刻&gt;下拉刷新效果实现 | EnjoySR的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="个人还是比较喜欢&amp;lt;即刻&amp;gt;这个应用，界面的效果与交互都是比较清爽，想模仿一下里面的部分交互效果，于是决定先从不是那么复杂的下拉刷新入手，并记录下自己实现的思路。另，本 Demo 是按照个人的思路来实现的，仅供学习交流，Demo 下载链接见最后。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="仿<即刻>下拉刷新效果实现">
+<meta property="og:url" content="https://enjoysr.github.io/2016/10/09/仿-即刻-下拉刷新效果实现/index.html">
+<meta property="og:site_name" content="EnjoySR的博客">
+<meta property="og:description" content="个人还是比较喜欢&amp;lt;即刻&amp;gt;这个应用，界面的效果与交互都是比较清爽，想模仿一下里面的部分交互效果，于是决定先从不是那么复杂的下拉刷新入手，并记录下自己实现的思路。另，本 Demo 是按照个人的思路来实现的，仅供学习交流，Demo 下载链接见最后。">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010025331-4000c33d038469f27d586c414f0fe7d3.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010030022-5a826d699b278d2c77b65e9ace59625d.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010030249-5ab73c5549be08aab8c6e80adfacbe00.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010030550-6f45aa16cd52367166ed8345aa825a38.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010031801-3a56ec9dff137da9f7876e7b00e2411a.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161009175454-4496d2328ee0712ea791250c93eb02ee.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010000242-48cf9a5cb3c29d491233eb623bcf34c3.png">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010000148-d9864d0060dcf2bc8ab7377b6a47564a.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010003755-cf943129bfae092682b8ec816c75d9fe.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010012220-af173f7d2e34e5530e2fca7a7bda75fc.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010013043-851a665f35db5a582cfc18abec30c737.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010013043-d00c0a9df9164ac68eeede013362c404.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010014444-d4a20907cdda4c35060572fb2903b0e9.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010021009-96d4b612cd0ba9105e0e827d118e2c3b.gif">
+<meta property="og:image" content="https://enjoysr.github.io/assets/blogImg/20161010022442-ffeb51e395b7a7e9d86db8d149a907fe.gif">
+<meta property="og:updated_time" content="2016-10-10T07:35:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="仿<即刻>下拉刷新效果实现">
+<meta name="twitter:description" content="个人还是比较喜欢&amp;lt;即刻&amp;gt;这个应用，界面的效果与交互都是比较清爽，想模仿一下里面的部分交互效果，于是决定先从不是那么复杂的下拉刷新入手，并记录下自己实现的思路。另，本 Demo 是按照个人的思路来实现的，仅供学习交流，Demo 下载链接见最后。">
+<meta name="twitter:image" content="https://enjoysr.github.io/assets/blogImg/20161010025331-4000c33d038469f27d586c414f0fe7d3.gif">
+  
+    <link rel="alternative" href="/atom.xml" title="EnjoySR的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="//favicon.png">
+  
+  <script src="/style.js"></script>
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="https://avatars0.githubusercontent.com/u/12967884?v=3&amp;s=466" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">EnjoySR</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">男人可以不帅.😏</p>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a class="js-smart-menu" data-idx="0" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="1" href="javascript:void(0)">标签</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="2" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/EnjoySR" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="http://weibo.com/EnjoySR" title="weibo">weibo</a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-list"></i></div>
+  		<h1 class="header-author js-mobile-header hide">EnjoySR</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="https://avatars0.githubusercontent.com/u/12967884?v=3&amp;s=466" class="js-avatar">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">EnjoySR</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">男人可以不帅.😏</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/EnjoySR" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/EnjoySR" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap">
+        <article id="post-仿-即刻-下拉刷新效果实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      仿&lt;即刻&gt;下拉刷新效果实现
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>个人还是比较喜欢&lt;即刻&gt;这个应用，界面的效果与交互都是比较清爽，想模仿一下里面的部分交互效果，于是决定先从不是那么复杂的<code>下拉刷新</code>入手，并记录下自己实现的思路。另，本 Demo 是按照个人的思路来实现的，仅供学习交流，Demo 下载链接见最后。<br><a id="more"></a></p>
+<h2 id="界面分析"><a href="#界面分析" class="headerlink" title="界面分析"></a>界面分析</h2><p>即刻APP本身效果图如下：<br><img src="/assets/blogImg/20161010025331-4000c33d038469f27d586c414f0fe7d3.gif" width="375"></p>
+<p>通过效果图，可以观察出以下几点结论：</p>
+<ul>
+<li>默认界面静止的情况下刷新控件是在 scrollView 的最上面，默认隐藏.(这句话是废话)</li>
+<li>当用户慢慢往下拖动的时候会出现一个灰色的 <code>J</code> 的字母慢慢被深色给填满</li>
+<li>当用户拖动距离大于某个范围的时候，控件的不再是紧贴着 scrollView 往下移动，此时的移动速度会放缓，保证刷新控件的 <code>J</code> 大概在 scrollView的内容顶部与界面顶部的中间位置</li>
+<li>当 <code>J</code> 在没有完全填满的情况下松手，刷新控件会回原位（这句好像也是废话）</li>
+<li>当 <code>J</code> 在完全填满的情况下松手，那么此时这个 <code>J</code> 会慢慢变成成一个圆圈，变化过程是 <code>J</code> 的底部的弧形会变成圆形，并且 <code>J</code> 的上半部分的竖线会慢慢变短，并且进行刷新状态</li>
+<li>进入刷新状态之后，圆圈进行旋转动画</li>
+<li>刷新完成圆圈慢慢变细并且刷新控件回到最初的位置</li>
+</ul>
+<p>经过以上一堆乱七八糟的分析之后，接下来再使用 Reveal 查看一下刷新控件的层次结构，如下：</p>
+<p><img src="/assets/blogImg/20161010030022-5a826d699b278d2c77b65e9ace59625d.png" width="600"></p>
+<p>再通过查看层次结构，也可以总结出以下几条：</p>
+<ul>
+<li>刷新控件继承于 UIView，并且内部并没有其他子控件，所以推断出里面的内容都是自己画出来的</li>
+<li>刷新控件的大小 45 <em> 45，默认 centerY 值是 -35 [(-自已的高度 </em> 0.5) - 12.5]</li>
+</ul>
+<p>接下来我们就可以根据我们分析的功能一条一条的来慢慢实现。</p>
+<h2 id="功能实现"><a href="#功能实现" class="headerlink" title="功能实现"></a>功能实现</h2><h3 id="1-创建刷新控件"><a href="#1-创建刷新控件" class="headerlink" title="1. 创建刷新控件"></a>1. 创建刷新控件</h3><p>创建 Swift 项目，自定义刷新控件类，取名为 <code>JKRefreshControl</code>，并实现 <code>initWithFrame</code> 方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">JKRefreshControl</span>: <span class="title">UIView</span> </span>&#123;</div><div class="line">    <span class="comment">// MARK: - 初始化</span></div><div class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</div><div class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frame)</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder aDecoder: <span class="type">NSCoder</span>) &#123;</div><div class="line">        <span class="built_in">fatalError</span>(<span class="string">"init(coder:) has not been implemented"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>先确定当前控件的大小，定义一个私有常量：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 刷新控件的宽高</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">RefreshControlWH</span>: <span class="type">CGFloat</span> = <span class="number">45</span></div></pre></td></tr></table></figure>
+<p>添加 <code>setupUI</code> 方法，在该方法中初始化控件，并在 <code>initWithFrame</code> 里面调用该方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupUI</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="comment">// 设置大小</span></div><div class="line">    frame.size = <span class="type">CGSize</span>(width: <span class="type">RefreshControlWH</span>, height: <span class="type">RefreshControlWH</span>)</div><div class="line">   <span class="comment">// 添加红色以供测试</span></div><div class="line">    backgroundColor = <span class="type">UIColor</span>.red</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在控制器中 <code>viewDidLoad</code> 初始化该控件，添加到 scrollView 中测试</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">super</span>.viewDidLoad()</div><div class="line">        </div><div class="line">    <span class="keyword">let</span> refresh = <span class="type">JKRefreshControl</span>()</div><div class="line">    scrollView.addSubview(refresh)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查看效果：<br><img src="/assets/blogImg/20161010030249-5ab73c5549be08aab8c6e80adfacbe00.png" width="375"></p>
+<h3 id="2-调整刷新控件位置"><a href="#2-调整刷新控件位置" class="headerlink" title="2. 调整刷新控件位置"></a>2. 调整刷新控件位置</h3><ul>
+<li>需求：刷新控件要放在 scrollView 的最顶端并默认隐藏，所以 y 值是为负，并且其中心 x 是根据其父控件的宽度来进行计算不能写死。</li>
+<li>思考：调整刷新控件的位置的代码可以写在刷新控件内部，为了别人使用起来方便(系统的刷新控件的大小与位置都不需要使用者去考虑)。</li>
+<li>问题：如何取到刷新控件的父控件，也就是说应该在哪个地方去取到父控件并设置值是最合适的。</li>
+<li>UIView 有一个方法：<code>willMoveToSuperView</code> 可以利用一个，可以在这个方法里面取到父控件，并且可以使用 <code>KVO</code> 监听父控件的 frame 变化，根据父控件的 frame 变化去调整当前刷新控件的位置，代码实现如下：</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">willMove</span><span class="params">(toSuperview newSuperview: UIView?)</span></span> &#123;</div><div class="line">    <span class="keyword">super</span>.willMove(toSuperview: newSuperview)</div><div class="line">       </div><div class="line">    <span class="keyword">if</span> <span class="keyword">let</span> superView = newSuperview <span class="keyword">as</span>? <span class="type">UIScrollView</span> &#123;</div><div class="line">        <span class="keyword">self</span>.superView = superView</div><div class="line">        <span class="comment">// 监听superView的frame变化</span></div><div class="line">        superView.addObserver(<span class="keyword">self</span>, forKeyPath: <span class="string">"frame"</span>, options: <span class="type">NSKeyValueObservingOptions</span>.new, context: <span class="literal">nil</span>)</div><div class="line">        <span class="comment">// 监听superView的滚动</span></div><div class="line">        superView.addObserver(<span class="keyword">self</span>, forKeyPath: <span class="string">"contentOffset"</span>, options: <span class="type">NSKeyValueObservingOptions</span>.new, context: <span class="literal">nil</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>添加通过传入父控件的 frame 去确定刷新控件位置的代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 设置控件的初始位置</span></div><div class="line"><span class="comment">///</span></div><div class="line"><span class="comment">/// - parameter superViewFrame: 父控件的位置</span></div><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setLocation</span><span class="params">(superViewFrame: CGRect)</span></span> &#123;</div><div class="line">    <span class="comment">// 后面的减 12.5 是为了确定其 y 值与 官方 app 的 y 值一样</span></div><div class="line">    <span class="keyword">self</span>.center = <span class="type">CGPoint</span>(x: superViewFrame.width * <span class="number">0.5</span>, y: -<span class="keyword">self</span>.frame.height * <span class="number">0.5</span> - <span class="number">12.5</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>添加 KVO 的值改变的处理：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">observeValue</span><span class="params">(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> keyPath == <span class="string">"contentOffset"</span> &#123;</div><div class="line">        <span class="comment">// <span class="doctag">TODO:</span> 处理 contentOffsetY 值改变</span></div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> keyPath == <span class="string">"frame"</span> &#123;</div><div class="line">        <span class="comment">// 取到改变后的值</span></div><div class="line">        <span class="keyword">let</span> value = (change![<span class="type">NSKeyValueChangeKey</span>.newKey] <span class="keyword">as</span>! <span class="type">NSValue</span>).cgRectValue</div><div class="line">        <span class="comment">// 重新设置位置</span></div><div class="line">        <span class="keyword">self</span>.setLocation(superViewFrame: value)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>另，因为后面需要根据 scrollView 的滚动距离去计算当前控件的状态，所以也可以在这个地方去使用 <code>KVO</code> 监听 scrollView 的 <code>contentOffset</code> 属性。关于为什么要什么 KVO 去监听滚动而不使用 scrollView 的代理方法呢，因为如果刷新控件成为 scrollView 的代理，那么就不能允许其他类比如控制器成为 scrollView 的代理，我们要做的就是让外界关心事情越少越好。</p>
+<p>运行测试效果：</p>
+<p><img src="/assets/blogImg/20161010030550-6f45aa16cd52367166ed8345aa825a38.png" width="600"></p>
+<h3 id="3-内部图案分析"><a href="#3-内部图案分析" class="headerlink" title="3. 内部图案分析"></a>3. 内部图案分析</h3><ul>
+<li>内部的图案再看层次结构分析它并不是一个 View，是画出来的</li>
+<li>有一个灰色背景的 <code>J</code>，可以一个使用 CAShapeLayer 来实现</li>
+<li>根据用户拖动而变化的 <code>J</code> 我的方式是使用两个 CAShapeLayer 来实现，一个 layer 实现字母 <code>J</code> 下面1/4圆的绘制，另一个 layer 实现字母 <code>J</code> 上面竖直图形的绘制</li>
+</ul>
+<p>如图所示：</p>
+<p><img src="/assets/blogImg/20161010031801-3a56ec9dff137da9f7876e7b00e2411a.png" width="600"></p>
+<p>定义一些常量，供设置到 layer 上去和后面绘图的时候使用</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 填充的颜色</span></div><div class="line"><span class="comment">/// 主题颜色</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">ThemeColor</span> = <span class="type">UIColor</span>(red: <span class="number">59</span>/<span class="number">255</span>, green: <span class="number">84</span>/<span class="number">255</span>, blue: <span class="number">106</span>/<span class="number">255</span>, alpha: <span class="number">1</span>)</div><div class="line"><span class="comment">/// 线宽</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">LineWidth</span>: <span class="type">CGFloat</span> = <span class="number">5</span></div><div class="line"><span class="comment">/// 顶部矩形高度</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">LineHeight</span>: <span class="type">CGFloat</span> = <span class="number">16</span></div><div class="line"><span class="comment">/// 内圆半径</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">InnerRadius</span>: <span class="type">CGFloat</span> = <span class="number">8</span></div><div class="line"><span class="comment">/// 绘制的中心点</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">let</span> <span class="type">DrawCenter</span> = <span class="type">CGPoint</span>(x: <span class="type">RefreshControlWH</span> * <span class="number">0.5</span>, y: <span class="type">RefreshControlWH</span> * <span class="number">0.5</span>)</div></pre></td></tr></table></figure>
+<p>定义 3 个 layer，并在 <code>setupUI</code> 方法中添加到刷新控件的 layer 中：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// MARK: - 懒加载layer</span></div><div class="line"><span class="comment">// 背景灰色的layer，显示 `J`</span></div><div class="line">fileprivate <span class="built_in">lazy</span> <span class="keyword">var</span> bgGrayLayer: <span class="type">CAShapeLayer</span> = &#123;</div><div class="line">    <span class="keyword">let</span> layer = <span class="type">CAShapeLayer</span>()</div><div class="line">    <span class="keyword">let</span> bgColor = <span class="type">UIColor</span>(red: <span class="number">222</span>/<span class="number">255</span>, green: <span class="number">226</span>/<span class="number">255</span>, blue: <span class="number">229</span>/<span class="number">255</span>, alpha: <span class="number">1</span>)</div><div class="line">    layer.fillColor = bgColor.cgColor</div><div class="line">    layer.strokeColor = bgColor.cgColor</div><div class="line">    <span class="keyword">return</span> layer</div><div class="line">&#125;()</div><div class="line"></div><div class="line"><span class="comment">// 底部layer,显示 `J` 的下半部分</span></div><div class="line">fileprivate <span class="built_in">lazy</span> <span class="keyword">var</span> bottomLayer: <span class="type">CAShapeLayer</span> = &#123;</div><div class="line">    <span class="keyword">let</span> layer = <span class="type">CAShapeLayer</span>()</div><div class="line">    layer.fillColor = <span class="type">UIColor</span>.clear.cgColor</div><div class="line">    layer.strokeColor = <span class="type">ThemeColor</span>.cgColor</div><div class="line">    <span class="comment">// 设置线宽</span></div><div class="line">    layer.lineWidth = <span class="keyword">self</span>.lineWidth</div><div class="line">    <span class="comment">// 设置frame，用于转圈</span></div><div class="line">    layer.frame = <span class="keyword">self</span>.bounds</div><div class="line">    <span class="keyword">return</span> layer</div><div class="line">&#125;()</div><div class="line">    </div><div class="line"><span class="comment">// 顶部layer，显示 `J` 的上半部分</span></div><div class="line">fileprivate <span class="built_in">lazy</span> <span class="keyword">var</span> topLayer: <span class="type">CAShapeLayer</span> = &#123;</div><div class="line">    <span class="keyword">let</span> layer = <span class="type">CAShapeLayer</span>()</div><div class="line">    layer.strokeColor = <span class="type">ThemeColor</span>.cgColor</div><div class="line">    layer.lineWidth = <span class="keyword">self</span>.lineWidth</div><div class="line">    <span class="keyword">return</span> layer</div><div class="line">&#125;()</div><div class="line"></div><div class="line">... </div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupUI</span><span class="params">()</span></span>&#123;</div><div class="line">    frame.size = <span class="type">CGSize</span>(width: <span class="type">RefreshControlWH</span>, height: <span class="type">RefreshControlWH</span>)</div><div class="line">    backgroundColor = <span class="type">UIColor</span>.clear</div><div class="line">       </div><div class="line">    <span class="comment">// 添加三个layer</span></div><div class="line">    layer.addSublayer(bgGrayLayer)</div><div class="line">    layer.addSublayer(bottomLayer)</div><div class="line">    layer.addSublayer(topLayer)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="4-背景灰色-J-的实现"><a href="#4-背景灰色-J-的实现" class="headerlink" title="4. 背景灰色 J 的实现"></a>4. 背景灰色 <code>J</code> 的实现</h3><p>添加一个 <code>extension</code>, 专门用于更新界面，并提供 <code>drawInLayer</code> 方法绘制 layer 中的内容：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// MARK: - 更新界面</span></div><div class="line"><span class="class"><span class="keyword">extension</span> <span class="title">JKRefreshControl</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="comment">/// 绘制 layer 中的内容</span></div><div class="line">    fileprivate <span class="function"><span class="keyword">func</span> <span class="title">drawInLayer</span><span class="params">()</span></span> &#123;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 <code>drawInLayer</code> 方法中实现绘制灰色背景 <code>J</code> 的逻辑：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">fileprivate <span class="function"><span class="keyword">func</span> <span class="title">drwaInLayer</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">    <span class="comment">// 绘制默认状态与松手就刷新状态的代码</span></div><div class="line">    <span class="comment">// 绘制灰色背景 layer 内容</span></div><div class="line">    <span class="comment">// 画 1/4 圆</span></div><div class="line">    <span class="keyword">let</span> path = <span class="type">UIBezierPath</span>(arcCenter: <span class="type">DrawCenter</span>, radius: <span class="type">InnerRadius</span>, startAngle: startAngle, endAngle: endAngle, clockwise: <span class="literal">false</span>)</div><div class="line">    <span class="comment">// 添加左边竖线</span></div><div class="line">    path.addLine(to: <span class="type">CGPoint</span>(x: path.currentPoint.x, y: <span class="type">DrawCenter</span>.y - <span class="type">LineHeight</span>))</div><div class="line">    <span class="comment">// 添加顶部横线</span></div><div class="line">    path.addLine(to: <span class="type">CGPoint</span>(x: path.currentPoint.x + <span class="type">LineWidth</span>, y: path.currentPoint.y))</div><div class="line">    <span class="comment">// 添加右边竖线</span></div><div class="line">    path.addLine(to: <span class="type">CGPoint</span>(x: path.currentPoint.x, y: path.currentPoint.y + <span class="type">LineHeight</span>))</div><div class="line">    <span class="comment">// 添加外圆</span></div><div class="line">    path.addArc(withCenter: <span class="type">DrawCenter</span>, radius: <span class="type">InnerRadius</span> + <span class="type">LineWidth</span>, startAngle: endAngle, endAngle: startAngle - <span class="number">0.05</span>, clockwise: <span class="literal">true</span>)</div><div class="line">    path.close()</div><div class="line">    <span class="comment">// 设置路径</span></div><div class="line">    bgGrayLayer.path = path.cgPath</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>aaa在画外圆的时候，endAngle 减去了 0.05，原因是官方的效果的字母 <code>J</code> 的底部并不是一个标准的1/4圆，会少一点</p>
+</blockquote>
+<p>在 <code>setupUI</code> 方法中调用该方法，运行测试效果如下：<br><img src="/assets/blogImg/20161009175454-4496d2328ee0712ea791250c93eb02ee.png" width="375"></p>
+<h3 id="5-处理-ScrollView-拖动改变控件的-y-值"><a href="#5-处理-ScrollView-拖动改变控件的-y-值" class="headerlink" title="5. 处理 ScrollView 拖动改变控件的 y 值"></a>5. 处理 ScrollView 拖动改变控件的 y 值</h3><p>我们上面说了，当用户拖动距离大于某个范围的时候，控件的不再是紧贴着 scrollView 往下移动，此时的移动速度会放缓，保证刷新控件的 <code>J</code> 大概在 scrollView的内容顶部与界面顶部的中间位置，所以添加 <code>dealContentOffsetYChanged</code> 方法用于处理 scrollView 的 contentOffsetY 值改变之后去处理刷新控件的位置：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 处理contentOffsetY改变</span></div><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">dealContentOffsetYChanged</span><span class="params">()</span></span> &#123;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 KVO 的值改变处理方法中调用该方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">observeValue</span><span class="params">(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> keyPath == <span class="string">"contentOffset"</span> &#123;</div><div class="line">        <span class="comment">// 处理contentOffsetY改变 </span></div><div class="line">        <span class="keyword">self</span>.dealContentOffsetYChanged()</div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> keyPath == <span class="string">"frame"</span> &#123;</div><div class="line">        <span class="keyword">let</span> value = (change![<span class="type">NSKeyValueChangeKey</span>.newKey] <span class="keyword">as</span>! <span class="type">NSValue</span>).cgRectValue</div><div class="line">        <span class="keyword">self</span>.setLocation(superViewFrame: value)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>需要实现的功能：当拖动的范围的2分之1大于控件的中心 y 值的时候，需要设置刷新控件的中心 y 值为 scrollView 内容顶部到 scrollView 的顶部的中间位置，具体见下图：<br><img src="/assets/blogImg/20161010000242-48cf9a5cb3c29d491233eb623bcf34c3.png" width="750"></p>
+<p>添加 <code>defaultCenterY</code> 属性记录控件的默认 y 值：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 默认的centerY</span></div><div class="line"><span class="built_in">lazy</span> <span class="keyword">var</span> defaultCenterY: <span class="type">CGFloat</span> = &#123;</div><div class="line">    <span class="keyword">return</span> -<span class="keyword">self</span>.frame.height * <span class="number">0.5</span> - <span class="number">12.5</span></div><div class="line">&#125;()</div></pre></td></tr></table></figure>
+<p>所以代码为：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">dealContentOffsetYChanged</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="comment">// 取出偏移的y值</span></div><div class="line">    <span class="keyword">let</span> contentOffsetY = superView.contentOffset.y;</div><div class="line">    </div><div class="line">    <span class="comment">// 1. 设置 控件的 y 值</span></div><div class="line">    <span class="comment">// 通过偏移量与顶部间距计算数当前控件的中心点</span></div><div class="line">    <span class="keyword">let</span> result = (contentOffsetY + superView.contentInset.top) / <span class="number">2</span></div><div class="line">    <span class="comment">// 判断计算出来的值是否比默认的Y值还要小，如果小，就设置该 y 值</span></div><div class="line">    <span class="keyword">if</span> result &lt; defaultCenterY &#123;</div><div class="line">        <span class="keyword">self</span>.center = <span class="type">CGPoint</span>(x: <span class="keyword">self</span>.center.x, y: result)</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        <span class="comment">// 否则继续设置为默认Y值</span></div><div class="line">        <span class="keyword">self</span>.center = <span class="type">CGPoint</span>(x: <span class="keyword">self</span>.center.x, y: defaultCenterY)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行查看效果：<br><img src="/assets/blogImg/20161010000148-d9864d0060dcf2bc8ab7377b6a47564a.gif" width="375"></p>
+<h3 id="6-根据拖动的距离填充字母-J"><a href="#6-根据拖动的距离填充字母-J" class="headerlink" title="6. 根据拖动的距离填充字母 J"></a>6. 根据拖动的距离填充字母 <code>J</code></h3><p>要根据拖动的距离填充字母，那么需要知道拖动距离与填充的范围的比例关系：</p>
+<ul>
+<li>例如：拖动的距离为50，填充字母 <code>J</code> 的范围比例为 50%</li>
+<li>而这个比例的公式为：比例 = 拖动的距离 / 控件的高度</li>
+<li>当拖动的距离已经完全将控件显示出来的话，那么就代表 <code>J</code> 被填满了。</li>
+</ul>
+<p>所以，我们可以定义一个属性值去记录当前拖动范围求出来的比例：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 拖动距离计算出来的填充比</span></div><div class="line"><span class="keyword">var</span> contentOffsetScale: <span class="type">CGFloat</span> = <span class="number">0</span> &#123;</div><div class="line">    <span class="keyword">didSet</span> &#123;</div><div class="line">        <span class="comment">// 当比例值大于 1 的时候，就设置为 1</span></div><div class="line">        <span class="keyword">if</span> contentOffsetScale &gt; <span class="number">1</span> &#123;</div><div class="line">            contentOffsetScale = <span class="number">1</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 当比例值小于 0 的时候，就设置为 0</span></div><div class="line">        <span class="keyword">if</span> contentOffsetScale &lt;= <span class="number">0</span> &#123;</div><div class="line">            contentOffsetScale = <span class="number">0</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注：当比例值大于 1 的时候，就设置为 1，当比例值小于 0 的时候，就设置为 0</p>
+</blockquote>
+<p>这个值在 <code>dealContentOffsetYChanged</code> 方法中计算出来：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">dealContentOffsetYChanged</span><span class="params">()</span></span> &#123;</div><div class="line">    </div><div class="line">    <span class="comment">// 1. 设置 控件的 y 值 (上面已实现，代码省略)</span></div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="comment">// 2. <span class="doctag">TODO:</span> 见文章下面</span></div><div class="line"></div><div class="line">    <span class="comment">// 3. 计算 scale</span></div><div class="line">    <span class="comment">// 通过拖动的距离计算.公式为：比例 = 拖动的距离 / 控件的高度</span></div><div class="line">    <span class="keyword">let</span> scale = -(superView.contentOffset.y + superView.contentInset.top) / <span class="type">RefreshingStayHeight</span></div><div class="line">    <span class="keyword">self</span>.contentOffsetScale = scale</div><div class="line">    <span class="comment">// 重新绘制内容</span></div><div class="line">    <span class="keyword">self</span>.drawInLayer()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接下来的任务就是要通过比例关系去填充字母，实现的思路是：</p>
+<ul>
+<li>如果比例小于等于 0.5，只填充 <code>bottomLayer</code>，<code>bottomLayer</code> 的填充范围是：比例 * 2</li>
+<li>如果比例大于 0.5，填满 <code>bottomLayer</code>，并且填充 <code>topLayer</code>，<code>topLayer</code> 的填充范围是：(比例 - 0.5) * 2</li>
+</ul>
+<p>所以在 <code>drawInLayer</code> 中添加实现代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 绘制 layer 中的内容</span></div><div class="line">fileprivate <span class="function"><span class="keyword">func</span> <span class="title">drawInLayer</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">    <span class="comment">// 绘制默认状态与松手就刷新状态的代码</span></div><div class="line">    <span class="comment">// 绘制灰色背景 layer 内容，上面已经有该代码，省略</span></div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="comment">// 通过比例绘制填充 layer</span></div><div class="line">    <span class="comment">// 如果小于0.016.在画度半圆的时候会反方向画，所以加个判断</span></div><div class="line">    <span class="keyword">if</span> contentOffsetScale &lt; <span class="number">0.016</span> &#123;</div><div class="line">        bgGrayLayer.path = <span class="literal">nil</span></div><div class="line">        bottomLayer.path = <span class="literal">nil</span></div><div class="line">        topLayer.path = <span class="literal">nil</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">       </div><div class="line">    <span class="comment">/// 提供内部方法，专门用于获取绘制底部的圆的 path</span></div><div class="line">    <span class="function"><span class="keyword">func</span> <span class="title">pathForBottomCircle</span><span class="params">(contentOffsetScale: CGFloat)</span></span> -&gt; <span class="type">UIBezierPath</span> &#123;</div><div class="line">        <span class="comment">// 记录传入的比例</span></div><div class="line">        <span class="keyword">var</span> scale = contentOffsetScale</div><div class="line">        <span class="comment">// 如果比例大于 0.5，那么设置为 0.5</span></div><div class="line">        <span class="keyword">if</span> scale &gt; <span class="number">0.5</span> &#123;</div><div class="line">            scale = <span class="number">0.5</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 计算出开始角度与结束角度</span></div><div class="line">        <span class="keyword">let</span> targetStartAngle = startAngle</div><div class="line">        <span class="keyword">let</span> targetEndAngle = startAngle - startAngle * scale * <span class="number">2</span></div><div class="line">        <span class="comment">// 初始化 path 并返回</span></div><div class="line">        <span class="keyword">let</span> drawPath = <span class="type">UIBezierPath</span>(arcCenter: <span class="type">DrawCenter</span>, radius: <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, startAngle: targetStartAngle, endAngle: targetEndAngle, clockwise: <span class="literal">false</span>)</div><div class="line">        <span class="keyword">return</span> drawPath</div><div class="line">    &#125;</div><div class="line">    bottomLayer.path = pathForBottomCircle(contentOffsetScale: contentOffsetScale).cgPath</div><div class="line">    <span class="comment">// 判断如果拖动比例小于0.5，只画半圆</span></div><div class="line">    <span class="keyword">if</span> contentOffsetScale &lt;= <span class="number">0.5</span> &#123;</div><div class="line">        topLayer.path = <span class="literal">nil</span></div><div class="line">    &#125;<span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// 画顶部竖线</span></div><div class="line">        <span class="keyword">let</span> topPath = <span class="type">UIBezierPath</span>()</div><div class="line">        topPath.lineCapStyle = .square</div><div class="line">        topPath.move(to: <span class="type">CGPoint</span>(x: <span class="type">DrawCenter</span>.x + <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, y: <span class="type">DrawCenter</span>.y))</div><div class="line">        topPath.addLine(to: <span class="type">CGPoint</span>(x: <span class="type">DrawCenter</span>.x + <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, y: <span class="type">DrawCenter</span>.y - (contentOffsetScale - <span class="number">0.5</span>) * <span class="number">2</span> * <span class="type">LineHeight</span>))</div><div class="line">        topLayer.path = topPath.cgPath</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行测试，效果如图：<br><img src="/assets/blogImg/20161010003755-cf943129bfae092682b8ec816c75d9fe.gif" width="375"></p>
+<p>写到这一步为止，刷新控件的拖动变化效果就已经实现完毕，接下来的任务是当字母被填满的时候松手，进行转圈的动画，但是：</p>
+<ul>
+<li>在做转圈动画之前，我们需要先完成当字母被填满的时候松手控件会停留在顶部位置，而不会回到导航栏下面</li>
+<li>所以我们需要弄清楚刷新控件的几种状态，通过刷新控件的几种状态去设置不同状态下刷新控件的位置<ul>
+<li>默认状态：被导航栏盖住（已完成）</li>
+<li>松手就可以刷新的状态：根据用户拖动去计算位置（已完成）</li>
+<li>刷新中状态：在导航栏的下面，并显示到界面上，实现思路是调整 scrollview 的 contentInset 的 top 实现增加 scrollView 的滚动范围</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-通过拖动-scrollView-调整刷新控件状态"><a href="#7-通过拖动-scrollView-调整刷新控件状态" class="headerlink" title="7. 通过拖动 scrollView 调整刷新控件状态"></a>7. 通过拖动 scrollView 调整刷新控件状态</h3><p>使用枚举定义刷新控件的状态：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 刷新控件的状态</span></div><div class="line"><span class="comment">///</span></div><div class="line"><span class="comment">/// - normal:     默认</span></div><div class="line"><span class="comment">/// - pulling:    松开就可刷新</span></div><div class="line"><span class="comment">/// - refreshing: 刷新中</span></div><div class="line"><span class="class"><span class="keyword">enum</span> <span class="title">JKRefreshState</span>: <span class="title">Int</span> </span>&#123;</div><div class="line">    <span class="keyword">case</span> normal = <span class="number">0</span>, pulling, refreshing</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在类中定义状态的属性 <code>refreshState</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 刷新状态，默认为默认状态</span></div><div class="line">fileprivate <span class="keyword">var</span> refreshState: <span class="type">JKRefreshState</span> = .normal</div></pre></td></tr></table></figure>
+<p>监听 scrollView 的滚动，在 <code>dealContentOffsetYChanged</code> 方法中调整刷新控件的状态：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">dealContentOffsetYChanged</span><span class="params">()</span></span> &#123;</div><div class="line">    </div><div class="line">    <span class="comment">// 1. 设置 控件的 y 值 (上面已实现，代码省略)</span></div><div class="line">    <span class="comment">// 通过偏移量与顶部间距计算数当前控件的中心点</span></div><div class="line">    <span class="keyword">let</span> result = (contentOffsetY + superView.contentInset.top) / <span class="number">2</span></div><div class="line">    ...</div><div class="line">    <span class="comment">// 2. 更改控件的状态</span></div><div class="line">    <span class="comment">// 如果正在被拖动</span></div><div class="line">    <span class="keyword">if</span> superView.isDragging &#123;</div><div class="line">        <span class="comment">// 如果空白中心点小于控件的默认中心y值，并且当前状态是默认状态，就进入 `松手就刷新的状态`</span></div><div class="line">        <span class="keyword">if</span> result &lt; defaultCenterY &amp;&amp;  refreshState == .normal &#123;</div><div class="line">            refreshState = .pulling</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> result &gt;= defaultCenterY &amp;&amp;  refreshState == .pulling &#123;</div><div class="line">            <span class="comment">// 如果空白中心点大于等于控件的默认中心y值，并且当前状态是默认状态，就进入 `默认状态`</span></div><div class="line">            refreshState = .normal</div><div class="line">        &#125;</div><div class="line">    &#125;<span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">// 用户已松手，判断当前状态如果是 `pulling` 状态就进行刷新状态</span></div><div class="line">        <span class="keyword">if</span> refreshState == .pulling &#123;</div><div class="line">            refreshState = .refreshing</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 3. 计算 scale (上面已实现，代码省略)</span></div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 <code>refreshState</code> 的 <code>didSet</code> 方法中调整顶部的距离</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 刷新状态</span></div><div class="line">fileprivate <span class="keyword">var</span> refreshState: <span class="type">JKRefreshState</span> = .normal &#123;</div><div class="line">    <span class="keyword">didSet</span>&#123;</div><div class="line">        <span class="keyword">switch</span> refreshState &#123;</div><div class="line">        <span class="keyword">case</span> .refreshing:</div><div class="line">            <span class="comment">// 调整顶部距离</span></div><div class="line">            <span class="keyword">var</span> inset = <span class="keyword">self</span>.superView.contentInset</div><div class="line">            <span class="comment">// 将原有的顶部距离加上刷新控件的高度</span></div><div class="line">            inset.top = inset.top + <span class="type">RefreshingStayHeight</span></div><div class="line">            <span class="comment">// 调整</span></div><div class="line">            <span class="type">DispatchQueue</span>.main.async &#123;</div><div class="line">                <span class="type">UIView</span>.animate(withDuration: <span class="type">RefreshControlHideDuration</span>, animations: &#123;</div><div class="line">                    <span class="keyword">self</span>.superView.contentInset = inset</div><div class="line">                    <span class="keyword">self</span>.superView.setContentOffset(<span class="type">CGPoint</span>(x: <span class="number">0</span>, y: -inset.top), animated: <span class="literal">false</span>)</div><div class="line">                &#125;, completion: &#123; (<span class="number">_</span>) <span class="keyword">in</span></div><div class="line">                    <span class="comment">// <span class="doctag">TODO:</span> 需要调用外界的刷新方法</span></div><div class="line">                &#125;)</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">default</span>:</div><div class="line">                <span class="keyword">break</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>关于为什么需要使用主队列异步去调整，并且还要设置 <code>contentOffset</code> 请见文章：<a href="http://www.cnblogs.com/max5945/p/4283225.html" target="_blank" rel="external">你的下拉刷新是否“抖”了一下</a></p>
+</blockquote>
+<h3 id="8-刷新中控件转圈效果的实现"><a href="#8-刷新中控件转圈效果的实现" class="headerlink" title="8. 刷新中控件转圈效果的实现"></a>8. 刷新中控件转圈效果的实现</h3><p>从<code>松开就可刷新状态</code>到<code>刷新中状态</code>的效果可以分成三部分：</p>
+<ul>
+<li><code>J</code> 底部的 1/4 圆慢慢变成整圆</li>
+<li><code>J</code> 的上面部分竖线慢慢变短</li>
+<li>变成整圆之后进行旋转</li>
+</ul>
+<p>三部分效果分别如下：</p>
+<p><img src="/assets/blogImg/20161010012220-af173f7d2e34e5530e2fca7a7bda75fc.gif" width="375"><img src="/assets/blogImg/20161010013043-851a665f35db5a582cfc18abec30c737.gif" width="375"><img src="/assets/blogImg/20161010013043-d00c0a9df9164ac68eeede013362c404.gif" width="375"></p>
+<p>只要将这三种效果合成一种效果就能实现即刻的效果，所以在 <code>drawInLayer</code> 方法中，判断如果是<code>刷新中</code>状态的话，就去执行 layer 的动画，代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 绘制 layer 中的内容</span></div><div class="line">fileprivate <span class="function"><span class="keyword">func</span> <span class="title">drawInLayer</span><span class="params">()</span></span> &#123;</div><div class="line">   </div><div class="line">   <span class="comment">// 开始角度</span></div><div class="line">   <span class="keyword">let</span> startAngle = <span class="type">CGFloat</span>(<span class="type">M_PI</span>) / <span class="number">2</span></div><div class="line">   <span class="comment">// 结束角度</span></div><div class="line">   <span class="keyword">let</span> endAngle: <span class="type">CGFloat</span> = <span class="number">0</span></div><div class="line">   </div><div class="line">   <span class="keyword">if</span> refreshState == .refreshing &#123;</div><div class="line">       <span class="comment">// 判断如果正在刷新的话，就不需要再次执行动画</span></div><div class="line">       <span class="keyword">if</span> isRefreshingAnim &#123;</div><div class="line">           <span class="keyword">return</span></div><div class="line">       &#125;</div><div class="line">       <span class="comment">// 调整执行动画属性为true</span></div><div class="line">       isRefreshingAnim = <span class="literal">true</span></div><div class="line">       <span class="comment">// 清空背景灰色的layer</span></div><div class="line">       bgGrayLayer.path = <span class="literal">nil</span></div><div class="line">       </div><div class="line">       <span class="comment">// 1. 底部半圆到整圆</span></div><div class="line">       <span class="keyword">let</span> bottomPath = <span class="type">UIBezierPath</span>(arcCenter: <span class="type">DrawCenter</span>, radius: <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, startAngle: <span class="number">0</span>, endAngle: <span class="type">CGFloat</span>(<span class="type">M_PI</span>) * <span class="number">2</span> - <span class="number">0.1</span>, clockwise: <span class="literal">true</span>)</div><div class="line">        bottomLayer.path = bottomPath.cgPath</div><div class="line">       </div><div class="line">        <span class="comment">// 执行动画</span></div><div class="line">        <span class="keyword">let</span> bottomAnim = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"strokeEnd"</span>)</div><div class="line">        bottomAnim.fromValue = <span class="type">NSNumber</span>(value: <span class="number">0.25</span>)</div><div class="line">        bottomAnim.toValue = <span class="type">NSNumber</span>(value: <span class="number">1.0</span>)</div><div class="line">        bottomAnim.duration = <span class="number">0.15</span></div><div class="line">        bottomLayer.add(bottomAnim, forKey: <span class="literal">nil</span>)</div><div class="line">        <span class="comment">// 2. 竖线变短动画</span></div><div class="line">        <span class="comment">// 顶部Path</span></div><div class="line">        <span class="keyword">let</span> topPath = <span class="type">UIBezierPath</span>()</div><div class="line">        topPath.lineCapStyle = .square</div><div class="line">        topPath.move(to: <span class="type">CGPoint</span>(x: <span class="type">DrawCenter</span>.x + <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, y: <span class="type">DrawCenter</span>.y))</div><div class="line">        topPath.addLine(to: <span class="type">CGPoint</span>(x: <span class="type">DrawCenter</span>.x + <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, y: <span class="type">DrawCenter</span>.y - (contentOffsetScale - <span class="number">0.5</span>) * <span class="number">2</span> * <span class="type">LineHeight</span>))</div><div class="line">        topLayer.path = topPath.cgPath</div><div class="line">       </div><div class="line">        <span class="comment">// 竖线变短动画</span></div><div class="line">        <span class="keyword">let</span> topAnim = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"strokeEnd"</span>)</div><div class="line">        topAnim.fromValue = <span class="type">NSNumber</span>(value: <span class="number">1</span>)</div><div class="line">        topAnim.toValue = <span class="type">NSNumber</span>(value: <span class="number">0</span>)</div><div class="line">        topAnim.duration = <span class="number">0.15</span></div><div class="line">        topLayer.strokeEnd = <span class="number">0</span>;</div><div class="line">        topLayer.add(topAnim, forKey: <span class="literal">nil</span>)</div><div class="line">       </div><div class="line">        <span class="comment">// 3. 0.15秒之后 转圈</span></div><div class="line">        <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: <span class="type">DispatchTime</span>.now() + <span class="number">0.15</span>, execute: &#123;</div><div class="line">                    <span class="comment">// 执行转圈动画</span></div><div class="line">            <span class="keyword">let</span> bottomPath = <span class="type">UIBezierPath</span>(arcCenter: <span class="type">DrawCenter</span>, radius: <span class="type">InnerRadius</span> + <span class="type">LineWidth</span> * <span class="number">0.5</span>, startAngle: <span class="number">0</span>, endAngle: <span class="type">CGFloat</span>(<span class="type">M_PI</span>) * <span class="number">2</span> - <span class="number">0.1</span>, clockwise: <span class="literal">true</span>)</div><div class="line">            <span class="keyword">self</span>.bottomLayer.path = bottomPath.cgPath</div><div class="line">        </div><div class="line">            <span class="comment">// 围绕 z 轴转圈</span></div><div class="line">            <span class="keyword">let</span> bottomAnim = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"transform.rotation.z"</span>)</div><div class="line">            bottomAnim.fromValue = <span class="type">NSNumber</span>(value: <span class="number">0</span>)</div><div class="line">            bottomAnim.toValue = <span class="type">NSNumber</span>(value: <span class="number">2</span> * <span class="type">M_PI</span>)</div><div class="line">            bottomAnim.duration = <span class="number">0.5</span></div><div class="line">            bottomAnim.repeatCount = <span class="type">MAXFLOAT</span></div><div class="line">            <span class="keyword">self</span>.bottomLayer.add(bottomAnim, forKey: <span class="string">"runaroundAnim"</span>)</div><div class="line">        &#125;)</div><div class="line">        <span class="comment">// 直接返回，不再执行下面的代码</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">// 绘制默认状态与松手就刷新状态的代码 (上面已实现，代码省略)</span></div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上代码中的 <code>isRefreshingAnim</code> 是用来记录当前是否正在执行刷新动画的属性，防止用户在刷新过程中来回拖动 scrollView 造成重复添加动画，代码定义为： </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 是否正在执行刷新中的动画，防止用户来回拖动 scrollView 造成重复添加动画</span></div><div class="line">fileprivate <span class="keyword">var</span> isRefreshingAnim: <span class="type">Bool</span> = <span class="literal">false</span></div></pre></td></tr></table></figure>
+<p>运行测试，效果如图：</p>
+<p><img src="/assets/blogImg/20161010014444-d4a20907cdda4c35060572fb2903b0e9.gif" width="375"></p>
+<h3 id="9-添加进入刷新中的监听事件"><a href="#9-添加进入刷新中的监听事件" class="headerlink" title="9. 添加进入刷新中的监听事件"></a>9. 添加进入刷新中的监听事件</h3><p>仿照系统的 <code>UIRefreshControl</code> 添加刷新的事件，所以我们可以将我们的刷新控件继承于 <code>UIControl</code>，那么我们的控件就拥有了添加事件的功能：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">JKRefreshControl</span>: <span class="title">UIControl</span> </span>&#123;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 <code>控制器</code> 中给刷新控件添加监听事件，并指定 <code>event</code> 为 <code>.valueChanged</code>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">super</span>.viewDidLoad()</div><div class="line">        </div><div class="line">    <span class="keyword">let</span> refresh = <span class="type">JKRefreshControl</span>()</div><div class="line">    refresh.addTarget(<span class="keyword">self</span>, action: #selector(loadData), <span class="keyword">for</span>: .valueChanged)</div><div class="line">    scrollView.addSubview(refresh)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// 模拟异步加载数据</span></div><div class="line"><span class="meta">@objc</span> <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">loadData</span><span class="params">()</span></span> &#123;</div><div class="line">   </div><div class="line">    <span class="type">DispatchQueue</span>.global().async &#123;</div><div class="line">        <span class="type">Thread</span>.sleep(forTimeInterval: <span class="number">3</span>)</div><div class="line">        <span class="type">DispatchQueue</span>.main.async &#123;</div><div class="line">            <span class="built_in">print</span>(<span class="string">"刷新完毕, reload tableView"</span>)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 <code>刷新控件</code> 的状态被改变成 <code>refresh</code> 状态的话调用监听的方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> .refreshing:</div><div class="line">                </div><div class="line">    <span class="comment">// 调整顶部距离</span></div><div class="line">    <span class="keyword">var</span> inset = <span class="keyword">self</span>.superView.contentInset</div><div class="line">    inset.top = inset.top + <span class="type">RefreshingStayHeight</span></div><div class="line">    <span class="type">DispatchQueue</span>.main.async &#123;</div><div class="line">        <span class="type">UIView</span>.animate(withDuration: <span class="type">RefreshControlHideDuration</span>, animations: &#123;</div><div class="line">            <span class="keyword">self</span>.superView.contentInset = inset</div><div class="line">            <span class="keyword">self</span>.superView.setContentOffset(<span class="type">CGPoint</span>(x: <span class="number">0</span>, y: -inset.top), animated: <span class="literal">false</span>)</div><div class="line">        &#125;, completion: &#123; (<span class="number">_</span>) <span class="keyword">in</span></div><div class="line">            <span class="comment">// 调用外界的刷新方法</span></div><div class="line">            <span class="keyword">self</span>.sendActions(<span class="keyword">for</span>: .valueChanged)</div><div class="line">        &#125;)</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>运行测试，可以看到当松手 3 秒后，就会打印 <code>刷新完毕</code>, 但是刷新完毕之后，刷新控件并没有回到最初的位置(被导航栏盖住)，所以接下来需要实现的当刷新完毕之后的效果。</p>
+<h3 id="10-刷新完毕动画效果实现"><a href="#10-刷新完毕动画效果实现" class="headerlink" title="10. 刷新完毕动画效果实现"></a>10. 刷新完毕动画效果实现</h3><p>当刷新完毕之后，转圈圆环的 layer 会慢慢变细，具体见顶部的效果图，所以我们也可以类似于系统的刷新控件 <code>UIRefreshControl</code> 提供结束刷新的方法 <code>endRefreshing</code>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 结束刷新</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">endRefreshing</span><span class="params">()</span></span> &#123;</div><div class="line">   </div><div class="line">    <span class="comment">// 执行转圈的layer的线宽的动画</span></div><div class="line">    <span class="keyword">let</span> animation = <span class="type">CABasicAnimation</span>(keyPath: <span class="string">"lineWidth"</span>)</div><div class="line">    animation.toValue = <span class="number">0</span></div><div class="line">    animation.duration = <span class="number">0.5</span></div><div class="line">    <span class="comment">// 设置最终线宽为 0,保证动画执行完毕之后不再显示</span></div><div class="line">    bottomLayer.lineWidth = <span class="number">0</span></div><div class="line">    bottomLayer.add(animation, forKey: <span class="literal">nil</span>)</div><div class="line">   </div><div class="line">    <span class="comment">// 重置 contentInset</span></div><div class="line">    <span class="keyword">var</span> inset = <span class="keyword">self</span>.superView.contentInset</div><div class="line">    inset.top = inset.top - <span class="type">RefreshingStayHeight</span></div><div class="line">    <span class="type">UIView</span>.animate(withDuration: <span class="type">RefreshControlHideDuration</span>, animations: &#123;</div><div class="line">        <span class="keyword">self</span>.superView.contentInset = inset</div><div class="line">        <span class="keyword">self</span>.superView.setContentOffset(<span class="type">CGPoint</span>(x: <span class="number">0</span>, y: -inset.top), animated: <span class="literal">false</span>)</div><div class="line">        &#125;, completion: &#123; (<span class="number">_</span>) <span class="keyword">in</span></div><div class="line">            <span class="comment">// 在所有动画执行完毕之后将状态设置为 normal</span></div><div class="line">            <span class="keyword">self</span>.refreshState = .normal</div><div class="line">   &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在所有动画执行完毕之后将状态设置为 <code>normal</code>，并且在 <code>normal</code> 是重置一些必要的属性：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 刷新状态</span></div><div class="line">fileprivate <span class="keyword">var</span> refreshState: <span class="type">JKRefreshState</span> = .normal &#123;</div><div class="line">   <span class="keyword">didSet</span> &#123;      </div><div class="line">       <span class="keyword">switch</span> refreshState &#123;</div><div class="line">       <span class="keyword">case</span> .refreshing:</div><div class="line">           ...</div><div class="line">       <span class="keyword">case</span> .normal:</div><div class="line">           <span class="comment">// 移除两个layer的路径</span></div><div class="line">           bottomLayer.path = <span class="literal">nil</span></div><div class="line">           topLayer.path = <span class="literal">nil</span></div><div class="line">           <span class="comment">// 为默认状态时，重置属性</span></div><div class="line">           bottomLayer.removeAllAnimations()</div><div class="line">           topLayer.strokeEnd = <span class="number">1</span></div><div class="line">           bottomLayer.lineWidth = <span class="type">LineWidth</span></div><div class="line">           isRefreshingAnim = <span class="literal">false</span></div><div class="line">       <span class="keyword">default</span>:</div><div class="line">           <span class="keyword">break</span></div><div class="line">       &#125;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在控制器中数据加载完成之后调用 <code>endRefreshing</code> 方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@objc</span> <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">loadData</span><span class="params">()</span></span> &#123;</div><div class="line">   </div><div class="line">    <span class="type">DispatchQueue</span>.global().async &#123;</div><div class="line">        <span class="type">Thread</span>.sleep(forTimeInterval: <span class="number">3</span>)</div><div class="line">        <span class="type">DispatchQueue</span>.main.async &#123;</div><div class="line">            <span class="built_in">print</span>(<span class="string">"刷新完毕, reload tableView"</span>)</div><div class="line">            <span class="keyword">self</span>.refresh.endRefreshing()</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>写到此，基本功能效果已经实现，效果如图：</p>
+<p><img src="/assets/blogImg/20161010021009-96d4b612cd0ba9105e0e827d118e2c3b.gif" width="375"></p>
+<h3 id="11-添加主动进入刷新状态的方法"><a href="#11-添加主动进入刷新状态的方法" class="headerlink" title="11. 添加主动进入刷新状态的方法"></a>11. 添加主动进入刷新状态的方法</h3><p>在&lt;即刻&gt;中，停留在<code>发现</code>页面的时候，点击底部 tabBar <code>发现</code> 按钮，会主动进行刷新状态，要实现这个功能，只需要添加一个方法 `` 让外界主动调用即可，代码实现如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// 开始刷新</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">beginRefreshing</span><span class="params">()</span></span> &#123;</div><div class="line">   </div><div class="line">    <span class="comment">// 如果已经开始刷新，就直接返回，防止用户多次点击</span></div><div class="line">    <span class="keyword">if</span> isBeginRefreshing &#123;</div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    isBeginRefreshing = <span class="literal">true</span></div><div class="line">    <span class="keyword">let</span> contentInsetY = superView.contentInset</div><div class="line">    <span class="type">UIView</span>.animate(withDuration: <span class="number">0.25</span>, animations: &#123;</div><div class="line">        <span class="comment">// 调整 contentOffset</span></div><div class="line">        <span class="keyword">self</span>.superView.setContentOffset(<span class="type">CGPoint</span>(x: <span class="number">0</span>, y: -contentInsetY.top - <span class="type">RefreshingStayHeight</span>), animated: <span class="literal">false</span>)</div><div class="line">    &#125;) &#123; (<span class="number">_</span>) <span class="keyword">in</span></div><div class="line">        <span class="comment">// 在动画执行完毕调整刷新状态为 `刷新中`</span></div><div class="line">        <span class="keyword">self</span>.refreshState = .refreshing</div><div class="line">        <span class="comment">// 重绘 layer</span></div><div class="line">        <span class="keyword">self</span>.drawInLayer()</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面代码中的 <code>isBeginRefreshing</code> 是定义一个标志，用于判断用户在第1次触发刷新状态之后，还刷新完成的情况下，再次触发，代码定义为：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 是否已经开始执行刷新，防止用户在未刷新完成的情况下重复触发</span></div><div class="line">fileprivate <span class="keyword">var</span> isBeginRefreshing: <span class="type">Bool</span> = <span class="literal">false</span></div><div class="line">``` </div><div class="line">并且在 `refreshState` 设置为 `normal` 状态的时候重置：</div><div class="line"></div><div class="line">```swift</div><div class="line">    <span class="keyword">case</span> .normal:</div><div class="line">        <span class="comment">// 重置一些其他的属性(上面已实现，代码省略)</span></div><div class="line">        ...</div><div class="line">        <span class="comment">// 重置是否开始刷新的状态</span></div><div class="line">        isBeginRefreshing = <span class="literal">false</span></div></pre></td></tr></table></figure>
+<p>在控制器中添加测试代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">super</span>.viewDidLoad()</div><div class="line">        </div><div class="line">    <span class="keyword">let</span> refresh = <span class="type">JKRefreshControl</span>()</div><div class="line">    refresh.addTarget(<span class="keyword">self</span>, action: #selector(loadData), <span class="keyword">for</span>: .valueChanged)</div><div class="line">    scrollView.addSubview(refresh)</div><div class="line">    <span class="comment">// 添加主动触发刷新的 item </span></div><div class="line">    navigationItem.leftBarButtonItem = <span class="type">UIBarButtonItem</span>(title: <span class="string">"Refresh"</span>, style: <span class="type">UIBarButtonItemStyle</span>.plain, target: refresh, action: #selector(<span class="type">JKRefreshControl</span>.beginRefreshing))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行测试，效果如图：</p>
+<p><img src="/assets/blogImg/20161010022442-ffeb51e395b7a7e9d86db8d149a907fe.gif" width="375"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>其实如果你看到这一句话的话，那么我猜可能存在两种情况：</p>
+<ol>
+<li>你很耐心的居然看完了😂</li>
+<li>你是中间基本没看，直接想滚动到最底部找 Demo 链接的…如果我猜对了，请给个 star 支持哈哈</li>
+</ol>
+<p>GitHub：<a href="https://github.com/EnjoySR/JKRefreshControl" target="_blank" rel="external">JKRefreshControl</a> by: <a href="http://weibo.com/EnjoySR/" target="_blank" rel="external">EnjoySR</a></p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/10/09/仿-即刻-下拉刷新效果实现/" class="archive-article-date">
+  	<time datetime="2016-10-09T03:40:13.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-10-09</time>
+</a>
+      
+      
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2016/10/07/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+	    <a class="jiathis_button_twitter"></a>
+	    <a class="jiathis_button_plus"></a> 
+	    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="仿-即刻-下拉刷新效果实现" data-title="仿&lt;即刻&gt;下拉刷新效果实现" data-url="https://enjoysr.github.io/2016/10/09/仿-即刻-下拉刷新效果实现/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"enjoysr"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 EnjoySR
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: false,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/./main.js"></script>
+
+
+    
+<div class="tools-col">
+  <ul class="btn-wrap">
+    
+      <li class="chose" data-hook="tools-section-all"><span class="text">全部</span><i class="icon-book"></i></li>
+    
+    
+      <li data-hook="tools-section-tag"><span class="text">标签</span><i class="icon-price-tags"></i></li>
+    
+    
+    
+      <li data-hook="tools-section-me"><span class="text">我</span><i class="icon-smile"></i></li>
+    
+  </ul>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all chose">
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-tag">
+    			<div class="widget tagcloud" id="js-tagcloud">
+    				
+    			</div>
+    	</section>
+    
+
+    
+
+    
+    	<section class="tools-section tools-section-me">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">这个家伙很懒...&lt;br&gt;所以什么都没有留下</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
